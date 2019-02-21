@@ -28,7 +28,32 @@ class Task():
 
     def get_reward(self):
         """Uses current pose of sim to return reward."""
-        reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+        reward = 1.-.001*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+        
+        if (abs(self.sim.pose[0] - self.target_pos[0])) < 0.25:
+            reward += 0.03
+        if (abs(self.sim.pose[1] - self.target_pos[1])) < 0.25:
+            reward += 0.03
+        if (abs(self.sim.pose[2] - self.target_pos[2])) < 0.25:
+            reward += 0.03
+        
+        if self.sim.time < self.sim.runtime and self.sim.done == True:
+            reward -= 10
+
+        #reward = 1
+        #penalty = 0
+        #current_position = self.sim.pose[:3]
+        #distance = np.sqrt(((current_position - self.target_pos)**2).sum())
+        
+        # penalty for euler angles to avoid unecessary rotations
+        #penalty += abs(self.sim.pose[3:6]).sum()
+        
+        #penalty for being distant from the target coordinates
+        #penalty += .003*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+        
+        #penalty for increasing total distance to the target
+        #penalty += distance**2
+        
         return reward
 
     def step(self, rotor_speeds):
